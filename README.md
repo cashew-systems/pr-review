@@ -24,5 +24,5 @@ Additional criteria:
 
 4. The user is able to generate the report in both PDF form and in excel form. 
 5. In the PDF form the report shows the user the:
-	a. Total of the weight, revenue, pieces, and number of shipments in one time period. 
-	b. Total of the weight, revenue, pieces, and number of shipments in the next time period. 
+    1. Total of the weight, revenue, pieces, and number of shipments in one time period. 
+    2. Total of the weight, revenue, pieces, and number of shipments in the next time period. 
