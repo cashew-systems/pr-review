@@ -1,38 +1,52 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import bodyParser from 'body-parser';
-import { generatePDFReport, generateExcelReport } from './reportGenerator';
+import nodemailer from 'nodemailer';
 
 const prisma = new PrismaClient();
 const app = express();
 app.use(bodyParser.json());
 
-app.post('/reports', async (req: Request, res: Response) => {
+const sendEmail = async (email: string, pdfBuffer: Buffer) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'your-email@gmail.com',
+      pass: 'your-email-password',
+    },
+  });
+
+  const mailOptions = {
+    from: 'your-email@gmail.com',
+    to: email,
+    subject: 'Sales Variance Report',
+    attachments: [
+      {
+        filename: 'report.pdf',
+        content: pdfBuffer,
+      },
+    ],
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+app.post('/generate-report', async (req: Request, res: Response) => {
   const { customerId, initialStart, initialEnd, endingStart, endingEnd } = req.body;
 
-  if (!customerId || !initialStart || !initialEnd || !endingStart || !endingEnd) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  if (new Date(endingEnd) <= new Date(initialStart)) {
-    return res.status(400).send('Ending period must be after the initial period');
-  }
-
   try {
-    await prisma.$executeRaw`SET statement_timeout = 180000;`; // This report can pull a large amount of data, so update timeout. 
-
     const initialOrders = await prisma.order.findMany({
       where: {
         customerId,
         date: { gte: new Date(initialStart), lte: new Date(initialEnd) },
-      }
+      },
     });
 
     const endingOrders = await prisma.order.findMany({
       where: {
         customerId,
         date: { gte: new Date(endingStart), lte: new Date(endingEnd) },
-      }
+      },
     });
 
     let weightInitial = 0;
@@ -72,5 +86,21 @@ app.post('/reports', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).send('Error generating report');
   }
+});
+
+app.post('/send-email', async (req: Request, res: Response) => {
+  const { email, pdf } = req.body;
+
+  try {
+    const pdfBuffer = Buffer.from(pdf, 'base64');
+    await sendEmail(email, pdfBuffer);
+    res.status(200).send('Email sent successfully');
+  } catch (error) {
+    res.status(500).send('Error sending email');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
 
