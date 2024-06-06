@@ -2,7 +2,7 @@
 
 ## Summary
 
-You're an engineering manager at Pallet reviewing one of the first manjor PRs for a new member of your team. You're going to to provide them feedback on how to execute major tasks to ensure that their performance meets the bar going forward. 
+You're an engineering manager at Pallet reviewing one of the first major PRs for a new member of your team. You're going to to provide them feedback on how to execute major tasks to ensure that their performance meets the bar going forward. 
 
 You should aim to provide both micro feedback along with macro feedback. Part of the interview is to prioritize what kind of feedback is most valuable to give them. 
 
