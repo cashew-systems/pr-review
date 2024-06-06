@@ -1,41 +1,59 @@
 import React, { useState } from 'react';
 import ReportForm from './ReportForm';
-import { generatePDFReport, generateExcelReport } from './reportGenerator';
+import { generatePDFReport } from './reportGenerator';
 
 const App: React.FC = () => {
   const [reportData, setReportData] = useState<any>(null);
 
   const handleSubmit = async (formData: any) => {
-    try {
-      const response = await fetch('/reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
+    const response = await fetch('/generate-report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+    const data = await response.json();
 
-      const initialData = {
-        weight: data.weightInitial,
-        revenue: data.revenueInitial,
-        pieces: data.piecesInitial,
-        shipments: data.shipmentsInitial,
-      };
-      const endingData = {
-        weight: data.weightEnding,
-        revenue: data.revenueEnding,
-        pieces: data.piecesEnding,
-        shipments: data.shipmentsEnding,
-      };
+    const initialOrders = data.initialOrders;
+    const endingOrders = data.endingOrders;
 
-      const pdfBuffer = await generatePDFReport(initialData, endingData);
-      const excelBuffer = await generateExcelReport(initialData, endingData);
+    let weightInitial = 0;
+    let revenueInitial = 0;
+    let piecesInitial = 0;
+    let shipmentsInitial = initialOrders.length;
 
-      setReportData({ pdf: pdfBuffer.toString('base64'), excel: excelBuffer.toString('base64') });
-    } catch (error) {
-      console.error('Error generating report', error);
+    for (const order of initialOrders) {
+      weightInitial += order.weight;
+      revenueInitial += order.revenue;
+      piecesInitial += order.pieces;
     }
+
+    let weightEnding = 0;
+    let revenueEnding = 0;
+    let piecesEnding = 0;
+    let shipmentsEnding = endingOrders.length;
+
+    for (const order of endingOrders) {
+      weightEnding += order.weight;
+      revenueEnding += order.revenue;
+      piecesEnding += order.pieces;
+    }
+
+    const reportData = {
+      weightInitial,
+      revenueInitial,
+      piecesInitial,
+      shipmentsInitial,
+      weightEnding,
+      revenueEnding,
+      piecesEnding,
+      shipmentsEnding,
+    };
+
+    const pdfBlob = await generatePDFReport(reportData);
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    setReportData({ pdfUrl });
   };
 
   return (
@@ -45,8 +63,7 @@ const App: React.FC = () => {
       {reportData && (
         <div>
           <h2>Report</h2>
-          <a href={`data:application/pdf;base64,${reportData.pdf}`} download="report.pdf">Download PDF</a>
-          <a href={`data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${reportData.excel}`} download="report.xlsx">Download Excel</a>
+          <a href={reportData.pdfUrl} download="report.pdf">Download PDF</a>
         </div>
       )}
     </div>

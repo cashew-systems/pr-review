@@ -19,7 +19,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Customer ID:</label>
+        <label>Customer ID (leave blank for all customers):</label>
         <input type="text" value={customerId} onChange={(e) => setCustomerId(e.target.value)} />
       </div>
       <div>

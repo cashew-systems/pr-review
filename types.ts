@@ -1,7 +1,11 @@
 export interface ReportData {
-  weight: number;
-  revenue: number;
-  pieces: number;
-  shipments: number;
+  weightInitial: number;
+  revenueInitial: number;
+  piecesInitial: number;
+  shipmentsInitial: number;
+  weightEnding: number;
+  revenueEnding: number;
+  piecesEnding: number;
+  shipmentsEnding: number;
 }
 

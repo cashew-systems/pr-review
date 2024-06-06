@@ -6,9 +6,14 @@ You're an engineering manager at Pallet reviewing one of the first manjor PRs fo
 
 You should aim to provide both micro feedback along with macro feedback. Part of the interview is to prioritize what kind of feedback is most valuable to give them. 
 
+This PR uses our technology stack, but none of the important issues are  to Prisma, Typescript, React, or other particular technologies. Please focus on the coding style, architecture, organization, API design, and technology agonostic issues.
+
+## Your task
+
 Please create a Google Document with your interviewer and put a header for each file name. Record the comments you'd give for the PR along with the line number in the Google Document. 
 
-This PR uses our technology stack, but none of the important issues are specific to Prisma, Typescript, React, or other particular technologies. Please focus on the coding style, architecture, organization, API design, and technology agonostic issues.
+Give some feedback on style, but primarily focus on architectural issues and more structural suggestions. We are looking for the highest impact changes, not nit picking. 
+
 
 ## The ticket text
 
